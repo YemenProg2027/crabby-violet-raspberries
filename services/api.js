@@ -102,16 +102,22 @@ export const createBooking = async (data) => {
 
 
   // Fetch user bookings
-  export const fetchUserBookings = async (userId) => {
-    try {
-      const response = await axios.get(`${API_BASE_URL}/bookings?user=${userId}`, { headers });
-      return response.data;
-    } catch (error) {
-      console.error('Error fetching bookings:', error);
-      throw error;
-    }
-  };
-  
+// Fetch user bookings
+export const fetchUserBookings = async (userId) => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/bookings`, {
+      headers,
+      params: {
+        q: JSON.stringify({ user: userId }), // Query for bookings with the specific user ID
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching bookings:', error.response?.data || error.message);
+    throw new Error('Unable to fetch user bookings.');
+  }
+};
+
 
 
 

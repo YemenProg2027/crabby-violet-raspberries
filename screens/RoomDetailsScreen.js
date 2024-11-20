@@ -20,7 +20,12 @@ export default function RoomDetailsScreen({ route, navigation }) {
 
       await createBooking(bookingData);
       alert('Room booked successfully!');
-      navigation.goBack();
+      
+      // Navigate to Home
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'Home', params: { user } }], // Reset stack to Home
+      });
     } catch (error) {
       alert('Error booking room. Please try again.');
     }
