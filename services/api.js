@@ -49,7 +49,7 @@ export const checkEmailExists = async (email) => {
       headers,
       params: { email },
     });
-    return false;
+ 
     return response.data.length > 0; // True if email exists
   } catch (error) {
     console.error('Error checking email:', error);
