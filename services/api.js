@@ -1,14 +1,12 @@
 import axios from 'axios';
 
-  const API_BASE_URL = 'https://hotel-58ce.restdb.io/rest';
-  const API_KEY = 'a7d849aef5dc96325b62ea171c284af1f70a2'; 
-  
-  const headers = {
-    'Content-Type': 'application/json',
-    'x-apikey': API_KEY,
-  };
-  
-  
+const API_BASE_URL = 'https://hotel-58ce.restdb.io/rest';
+const API_KEY = 'a7d849aef5dc96325b62ea171c284af1f70a2';
+
+const headers = {
+  'Content-Type': 'application/json',
+  'x-apikey': API_KEY,
+};
 
 // Login user
 export const loginUser = async (email, password) => {
@@ -19,7 +17,6 @@ export const loginUser = async (email, password) => {
         q: JSON.stringify({ email, password }), // Filter users by email and password
       },
     });
-    
 
     console.log(response.data);
     return response.data.length > 0 ? response.data[0] : null; // Return user if found
@@ -42,14 +39,16 @@ export const registerUser = async (userData) => {
   }
 };
 
-
 export const checkEmailExists = async (email) => {
   try {
     const response = await axios.get(`${API_BASE_URL}/users`, {
       headers,
-      params: { email },
+
+      params: {
+        q: JSON.stringify({ email }), // Filter users by email and password
+      },
     });
- 
+
     return response.data.length > 0; // True if email exists
   } catch (error) {
     console.error('Error checking email:', error);
@@ -57,37 +56,37 @@ export const checkEmailExists = async (email) => {
   }
 };
 
+// Fetch all hotels
+export const fetchHotels = async () => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/hotels`, { headers });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching hotels:', error);
+    throw error;
+  }
+};
 
+// Fetch rooms for a hotel
+export const fetchRooms = async (hotelId) => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/rooms?hotel=${hotelId}`, {
+      headers,
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching rooms:', error);
+    throw error;
+  }
+};
 
-
-  
-  // Fetch all hotels
-  export const fetchHotels = async () => {
-    try {
-      const response = await axios.get(`${API_BASE_URL}/hotels`, { headers });
-      return response.data;
-    } catch (error) {
-      console.error('Error fetching hotels:', error);
-      throw error;
-    }
-  };
-  
-  // Fetch rooms for a hotel
-  export const fetchRooms = async (hotelId) => {
-    try {
-      const response = await axios.get(`${API_BASE_URL}/rooms?hotel=${hotelId}`, { headers });
-      return response.data;
-    } catch (error) {
-      console.error('Error fetching rooms:', error);
-      throw error;
-    }
-  };
-  
 // Create a booking and update room status
 export const createBooking = async (data) => {
   try {
     // Create the booking
-    const response = await axios.post(`${API_BASE_URL}/bookings`, data, { headers });
+    const response = await axios.post(`${API_BASE_URL}/bookings`, data, {
+      headers,
+    });
 
     // Update the room status to "booked"
     await updateRoomStatus(data.room._id, true);
@@ -99,9 +98,7 @@ export const createBooking = async (data) => {
   }
 };
 
-
-
-  // Fetch user bookings
+// Fetch user bookings
 // Fetch user bookings
 export const fetchUserBookings = async (userId) => {
   try {
@@ -113,21 +110,24 @@ export const fetchUserBookings = async (userId) => {
     });
     return response.data;
   } catch (error) {
-    console.error('Error fetching bookings:', error.response?.data || error.message);
+    console.error(
+      'Error fetching bookings:',
+      error.response?.data || error.message
+    );
     throw new Error('Unable to fetch user bookings.');
   }
 };
-
-
-
 
 // Cancel a booking and update room status
 export const cancelBooking = async (bookingId, roomId) => {
   try {
     // Cancel the booking
-    const response = await axios.delete(`${API_BASE_URL}/bookings/${bookingId}`, {
-      headers,
-    });
+    const response = await axios.delete(
+      `${API_BASE_URL}/bookings/${bookingId}`,
+      {
+        headers,
+      }
+    );
 
     // Update the room status to "not booked"
     await updateRoomStatus(roomId, false);
@@ -138,7 +138,6 @@ export const cancelBooking = async (bookingId, roomId) => {
     throw error;
   }
 };
-
 
 // Update room booking status
 export const updateRoomStatus = async (roomId, isBooked) => {
@@ -154,5 +153,3 @@ export const updateRoomStatus = async (roomId, isBooked) => {
     throw error;
   }
 };
-
-
